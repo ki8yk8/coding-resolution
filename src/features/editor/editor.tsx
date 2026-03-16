@@ -46,6 +46,13 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     const start = preRange.toString().length
     const end = start + range.toString().length
 
+    // trying to change the selection range and seeing if visually effects
+    range.setStart(range.startContainer, start - 1)
+    range.setEnd(range.endContainer, end + 1)
+
+    selection.removeAllRanges()
+    selection.addRange(range)
+
     const text = selection.toString()
 
     if (!text) return null
@@ -56,10 +63,10 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
       text,
       rect,
       start,
-      end,    // excluding
+      end, // excluding
     }
 
-		return ret;
+    return ret
   }
 
   return (
