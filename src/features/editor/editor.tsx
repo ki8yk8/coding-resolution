@@ -34,21 +34,32 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     const p = editorParagraphRef.current
     if (!p) return
 
-		// check if selection is inside and accept only if inside
-		const isInside = p.contains(range.startContainer) && p.contains(range.endContainer);
-		if (!isInside) return;
+    // check if selection is inside and accept only if inside
+    const isInside =
+      p.contains(range.startContainer) && p.contains(range.endContainer)
+    if (!isInside) return
+
+    const preRange = range.cloneRange()
+    preRange.selectNodeContents(p)
+    preRange.setEnd(range.startContainer, range.startOffset)
+
+    const start = preRange.toString().length
+    const end = start + range.toString().length
 
     const text = selection.toString()
 
     if (!text) return null
 
     const rect = range.getBoundingClientRect()
-    console.log(text)
 
-    return {
+    const ret = {
       text,
       rect,
+      start,
+      end,    // excluding
     }
+
+		return ret;
   }
 
   return (
