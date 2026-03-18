@@ -11,3 +11,7 @@ export interface SelectionInfo {
   end: number
   rect: DOMRect
 }
+
+export type Segment =
+  | { type: "text"; content: string; selected?: boolean }
+  | { type: "edit"; content: string; replacement: string }

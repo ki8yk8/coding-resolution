@@ -1,6 +1,6 @@
 import type { SelectionInfo } from "./types"
 
-export function getSelection(p: HTMLParagraphElement): SelectionInfo | null {
+export function getSelection(p: HTMLSpanElement): SelectionInfo | null {
   const selection = window.getSelection()
 
   // if there is not selection then out

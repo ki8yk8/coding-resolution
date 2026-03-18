@@ -6,8 +6,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { useRef, useState } from "react"
-import type { EditorProps } from "./types"
+import type { EditorProps, Segment } from "./types"
 import { expandSelectionToWords, getSelection } from "./utils"
+import Segments from "./components/segment-render"
 import {
   Popover,
   PopoverContent,
@@ -22,25 +23,68 @@ const HEADER_DESCRIPTION = "You can select the span of text to correct it."
 const INITIAL_TEXT =
   "Hey, I want to developer so, I am learning how to cook, and clean. This is something that you can edit this so feel free to make this thing better. And alternatively you can also screenshot this after editing and share with the team."
 
+function getPopUpPosition(segments: Array<Segment>) {
+  return [0, 0]
+}
+
 export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
-  const editorParagraphRef = useRef<HTMLParagraphElement>(null)
+  const [segments, setSegments] = useState<Array<Segment>>([
+    { type: "text", content: text, selected: false },
+  ])
+  const segmentRefs = useRef<(HTMLSpanElement | null)[]>([])
   const [popOpen, setPopOpen] = useState<boolean>(false)
   const [popPosition, setPopPosition] = useState<[number, number]>([0, 0])
 
-  function handleMouseUp() {
-    if (!editorParagraphRef.current) return
+  /* 
+	1. onMouseUp see if there are multiple segment or single segment; if multiple then toast
+	2. find out the selectionoffsets with the span
+	3. extend the selection offset to word boundaries
+	4. based on the segment position show the popover
+	5. the popover disappers if and only if pressed done or cancelled else not
+	6. create new segment array based on the condition
+	*/
+  function handleMouseUp(index: number) {
+    // if the segment ref is not assigned or segment is already edited
+    if (!segmentRefs.current[index] || segments[index].type === "edit") return
 
-    const sel = getSelection(editorParagraphRef.current)
+    // get the selection info
+    const sel = getSelection(segmentRefs.current[index])
     if (!sel) return
     const { range, selection, text: selectedText, rect, start, end } = sel
 
     // change the selection to be bounded on words
     const [newStart, newEnd] = expandSelectionToWords(text, start, end)
-    range.setStart(range.startContainer, newStart)
-    range.setEnd(range.endContainer, newEnd)
+    // isolating the current segment
+    const [preSegments, thisSegment, postSegments] = [
+      segments.slice(0, index),
+      segments[index],
+      segments.slice(index + 1, segments.length),
+    ]
 
-    selection.removeAllRanges()
-    selection.addRange(range)
+    // isolating the selected part only
+    const beforeSelectedSegment:Array<Segment> = newStart === 0? [] : [{
+			type: "text" as const,
+			content: thisSegment.content.slice(0, newStart),
+		}]
+    const selectedSegment:Segment = {
+			type: "text" as const,
+			content: thisSegment.content.slice(newStart, newEnd),
+			selected: true,
+		};
+    const afterSelectedSegment = newEnd === thisSegment.content.length ? [] : [{
+			type: "text" as const,
+			content: thisSegment.content.slice(newEnd,)
+		}]
+
+    // joining all the segment
+    const updatedSegment = [
+      ...preSegments,
+      ...beforeSelectedSegment,
+      selectedSegment,
+      ...afterSelectedSegment,
+      ...postSegments,
+    ]
+		setSegments(updatedSegment)
 
     setPopOpen(true)
     setPopPosition([rect.left, rect.bottom + 2])
@@ -83,9 +127,11 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
         </CardHeader>
 
         <CardContent className="text-2xl font-medium">
-          <p onMouseUp={handleMouseUp} ref={editorParagraphRef}>
-            {text + "    "}
-          </p>
+          <Segments
+            segments={segments}
+            refs={segmentRefs}
+            onMouseUp={handleMouseUp}
+          />
         </CardContent>
       </Card>
     </div>
