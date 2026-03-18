@@ -5,9 +5,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import type { EditorProps } from "./types"
 import { expandSelectionToWords, getSelection } from "./utils"
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 const HEADER_DESCRIPTION = "You can select the span of text to correct it."
 // BUG: at the end of the text there will be always mutliple spaces. This is to have the selection to end because the issue with current one is if selected to end it will not display all the selected.
@@ -16,35 +24,54 @@ const INITIAL_TEXT =
 
 export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
   const editorParagraphRef = useRef<HTMLParagraphElement>(null)
+  const [popOpen, setPopOpen] = useState<boolean>(false)
 
   function handleMouseUp() {
-		if (!editorParagraphRef.current) return;
+    if (!editorParagraphRef.current) return
 
-    const sel = getSelection(editorParagraphRef.current);
-		if (!sel) return;
-		const {range, selection, text:selectedText, rect, start, end} = sel
+    const sel = getSelection(editorParagraphRef.current)
+    if (!sel) return
+    const { range, selection, text: selectedText, rect, start, end } = sel
 
     // change the selection to be bounded on words
-		const [newStart, newEnd] = expandSelectionToWords(text, start, end);
+    const [newStart, newEnd] = expandSelectionToWords(text, start, end)
     range.setStart(range.startContainer, newStart)
     range.setEnd(range.endContainer, newEnd)
 
     selection.removeAllRanges()
     selection.addRange(range)
+
+    setPopOpen(true)
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>About me</CardTitle>
-        <CardDescription>{HEADER_DESCRIPTION}</CardDescription>
-      </CardHeader>
+    <div>
+      <Popover open={popOpen}>
+        <PopoverTrigger asChild className="hidden">
+          <span />
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader>
+            <PopoverTitle>Correction</PopoverTitle>
+            <PopoverDescription>
+              Edits only the content you have selected. If you want to exapnd
+              the correction you need to reselect.
+            </PopoverDescription>
+          </PopoverHeader>
+        </PopoverContent>
+      </Popover>
+      <Card>
+        <CardHeader>
+          <CardTitle>About me</CardTitle>
+          <CardDescription>{HEADER_DESCRIPTION}</CardDescription>
+        </CardHeader>
 
-      <CardContent className="text-2xl font-medium">
-        <p onMouseUp={handleMouseUp} ref={editorParagraphRef}>
-          {text + "    "}
-        </p>
-      </CardContent>
-    </Card>
+        <CardContent className="text-2xl font-medium">
+          <p onMouseUp={handleMouseUp} ref={editorParagraphRef}>
+            {text + "    "}
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
