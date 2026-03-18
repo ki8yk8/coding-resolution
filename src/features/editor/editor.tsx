@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card"
 import { useRef } from "react"
 import type { EditorProps } from "./types"
-import { getSelection } from "./utils"
+import { expandSelectionToWords, getSelection } from "./utils"
 
 const HEADER_DESCRIPTION = "You can select the span of text to correct it."
 // BUG: at the end of the text there will be always mutliple spaces. This is to have the selection to end because the issue with current one is if selected to end it will not display all the selected.
@@ -24,9 +24,10 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
 		if (!sel) return;
 		const {range, selection, text, rect, start, end} = sel
 
-    // trying to change the selection range and seeing if visually effects
-    range.setStart(range.startContainer, start - 1)
-    range.setEnd(range.endContainer, end + 1)
+    // change the selection to be bounded on words
+		const [newStart, newEnd] = expandSelectionToWords(text, start, end);
+    range.setStart(range.startContainer, newStart)
+    range.setEnd(range.endContainer, newEnd)
 
     selection.removeAllRanges()
     selection.addRange(range)

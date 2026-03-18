@@ -1,8 +1,6 @@
 import type { SelectionInfo } from "./types"
 
-export function getSelection(
-  p: HTMLParagraphElement
-): SelectionInfo | null {
+export function getSelection(p: HTMLParagraphElement): SelectionInfo | null {
   const selection = window.getSelection()
 
   // if there is not selection then out
@@ -39,4 +37,15 @@ export function getSelection(
     start,
     end,
   }
+}
+
+export function expandSelectionToWords(
+  text: string,
+  start: number,
+  end: number
+): [number, number] {
+  text
+  start
+  end
+  return [0, 1]
 }
