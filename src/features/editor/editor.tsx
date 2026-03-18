@@ -25,6 +25,7 @@ const INITIAL_TEXT =
 export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
   const editorParagraphRef = useRef<HTMLParagraphElement>(null)
   const [popOpen, setPopOpen] = useState<boolean>(false)
+  const [popPosition, setPopPosition] = useState<[number, number]>([0, 0])
 
   function handleMouseUp() {
     if (!editorParagraphRef.current) return
@@ -42,6 +43,8 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     selection.addRange(range)
 
     setPopOpen(true)
+    setPopPosition([rect.left, rect.bottom + 2])
+    console.log(rect.left)
   }
 
   return (
@@ -50,7 +53,10 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
         <PopoverTrigger asChild className="hidden">
           <span />
         </PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent
+          className="fixed"
+          style={{ left: popPosition[0], top: popPosition[1] }}
+        >
           <PopoverHeader>
             <PopoverTitle>Correction</PopoverTitle>
             <PopoverDescription>
@@ -60,6 +66,7 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
           </PopoverHeader>
         </PopoverContent>
       </Popover>
+
       <Card>
         <CardHeader>
           <CardTitle>About me</CardTitle>
