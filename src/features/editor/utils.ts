@@ -51,10 +51,10 @@ export function expandSelectionToWords(
       break
     }
 
-		// handle edge case
-		if (i === 0) {
-			start = 0;
-		}
+    // handle edge case
+    if (i === 0) {
+      start = 0
+    }
   }
 
   // move from end to right for the end position

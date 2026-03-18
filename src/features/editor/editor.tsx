@@ -22,7 +22,7 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
 
     const sel = getSelection(editorParagraphRef.current);
 		if (!sel) return;
-		const {range, selection, text, rect, start, end} = sel
+		const {range, selection, text:selectedText, rect, start, end} = sel
 
     // change the selection to be bounded on words
 		const [newStart, newEnd] = expandSelectionToWords(text, start, end);
