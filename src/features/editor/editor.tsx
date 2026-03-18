@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card"
 import { useRef, useState } from "react"
 import type { EditorProps, Segment } from "./types"
-import { expandSelectionToWords, getSelection } from "./utils"
+import { cleanSegments, expandSelectionToWords, getSelection } from "./utils"
 import Segments from "./components/segment-render"
 import {
   Popover,
@@ -111,16 +111,14 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
 
   function handlePopupCancel() {
     // turning off the selected segment
-    setSegments((prev) =>
-      prev.map((item) =>
-        item.type === "text" && item.selected
-          ? { ...item, selected: false }
-          : item
-      )
+    const updatedSegments = segments.map((item) =>
+      item.type === "text" && item.selected
+        ? { ...item, selected: false }
+        : item
     )
 
-		// TODO: merge the segments that are mergeable
-		
+		// merging the consecutive segments
+		setSegments(cleanSegments(updatedSegments))
 
     // removing the popup
     setPopup((prev) => ({ ...prev, display: false }))

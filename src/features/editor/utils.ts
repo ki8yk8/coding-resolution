@@ -73,13 +73,31 @@ export function expandSelectionToWords(
   return [start, end]
 }
 
-export function cleanSegments(segments: Array<Segment>):Array<Segment> {
-	const cleanedSegments = [];
+export function cleanSegments(segments: Array<Segment>): Array<Segment> {
+  const cleanedSegments: Array<Segment> = []
 
-	// merging logic if the two consecutive elements have same type then merge them
-	let [ptr_a, ptr_b] = [0, 1];
-	while (ptr_b>ptr_a) {
-		const [segment_a, segment_b] = [segments[ptr_a], segments[ptr_b]]
-	}
+  // merging logic if the two consecutive elements have same type then merge them
+  let ptr = 1
+  let tempSegment: Segment = segments[0]
 
+  while (ptr < segments.length) {
+    const segment = segments[ptr]
+    if (segment.type === tempSegment.type) {
+      // add into temporary segment
+      tempSegment["content"] =
+        `${tempSegment["content"]}${segment["content"]}`
+
+      if (tempSegment.type === "edit" && segment.type === "edit") {
+        tempSegment["replacement"] =
+          `${tempSegment["replacement"]}${segment["replacement"]}`
+      }
+    } else {
+      cleanedSegments.push(tempSegment)
+      tempSegment = segments[ptr]
+    }
+    ptr++
+  }
+	cleanedSegments.push(tempSegment);
+
+  return cleanedSegments
 }

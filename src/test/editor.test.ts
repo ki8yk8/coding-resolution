@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest"
-import { expandSelectionToWords } from "@/features/editor/utils.ts"
-import type { Segment } from "@/features/editor/types.ts"
-import { cleanSegments } from "@/features/editor/utils.ts"
+import type { Segment } from "@/features/editor/types"
+import { cleanSegments, expandSelectionToWords } from "../features/editor/utils"
 
 describe("Expand annotation span toward words", () => {
   const paragraph = "This is a dummy paragraph"
