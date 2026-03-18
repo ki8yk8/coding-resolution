@@ -1,4 +1,4 @@
-import type { SelectionInfo } from "./types"
+import type { Segment, SelectionInfo } from "./types"
 
 export function getSelection(p: HTMLSpanElement): SelectionInfo | null {
   const selection = window.getSelection()
@@ -71,4 +71,15 @@ export function expandSelectionToWords(
   }
 
   return [start, end]
+}
+
+export function cleanSegments(segments: Array<Segment>):Array<Segment> {
+	const cleanedSegments = [];
+
+	// merging logic if the two consecutive elements have same type then merge them
+	let [ptr_a, ptr_b] = [0, 1];
+	while (ptr_b>ptr_a) {
+		const [segment_a, segment_b] = [segments[ptr_a], segments[ptr_b]]
+	}
+
 }

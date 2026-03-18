@@ -120,6 +120,7 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     )
 
 		// TODO: merge the segments that are mergeable
+		
 
     // removing the popup
     setPopup((prev) => ({ ...prev, display: false }))
