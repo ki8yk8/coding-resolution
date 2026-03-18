@@ -57,10 +57,10 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     // get the selection info
     const sel = getSelection(segmentRefs.current[index])
     if (!sel) return
-    const { range, selection, text: selectedText, rect, start, end } = sel
+    const { rect, start, end } = sel
 
     // change the selection to be bounded on words
-    const [newStart, newEnd] = expandSelectionToWords(text, start, end)
+    const [newStart, newEnd] = expandSelectionToWords(segments[index]["content"], start, end)
     // isolating the current segment
     const [preSegments, thisSegment, postSegments] = [
       segments.slice(0, index),
