@@ -17,6 +17,7 @@ import {
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const HEADER_DESCRIPTION = "You can select the span of text to correct it."
 // BUG: at the end of the text there will be always mutliple spaces. This is to have the selection to end because the issue with current one is if selected to end it will not display all the selected.
@@ -60,7 +61,11 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     const { rect, start, end } = sel
 
     // change the selection to be bounded on words
-    const [newStart, newEnd] = expandSelectionToWords(segments[index]["content"], start, end)
+    const [newStart, newEnd] = expandSelectionToWords(
+      segments[index]["content"],
+      start,
+      end
+    )
     // isolating the current segment
     const [preSegments, thisSegment, postSegments] = [
       segments.slice(0, index),
@@ -152,8 +157,6 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     setPopup((prev) => ({ ...prev, display: false }))
   }
 
-	console.log(segments);
-
   return (
     <div>
       <Popover open={popup.display}>
@@ -195,11 +198,29 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
         </CardHeader>
 
         <CardContent className="text-2xl font-medium">
-          <Segments
-            segments={segments}
-            refs={segmentRefs}
-            onMouseUp={handleMouseUp}
-          />
+          <Tabs defaultValue="edit">
+            <div className="flex justify-end">
+              <TabsList>
+                <TabsTrigger value="edit">Edit</TabsTrigger>
+                <TabsTrigger value="view">View</TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="edit">
+              <Segments
+                segments={segments}
+                refs={segmentRefs}
+                onMouseUp={handleMouseUp}
+              />
+            </TabsContent>
+            <TabsContent value="view">
+              <Segments
+                segments={segments}
+                refs={segmentRefs}
+                showEdited={true}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

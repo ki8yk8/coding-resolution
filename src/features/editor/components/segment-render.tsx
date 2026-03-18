@@ -25,20 +25,20 @@ export default function Segments({
               refs.current[index] = e
             }}
             onMouseUp={handleMouseUp.bind(null, index)}
-						className={segment.selected ? "bg-red-400 text-white": ""}
+            className={segment.selected ? "bg-red-400 text-white" : ""}
           >
             {segment["content"]}
           </span>
         ) : (
           <span
             key={index}
-            className={`italic bg-blue-400 ${editedSpanStyle}`}
+            className={`bg-blue-400 italic ${editedSpanStyle}`}
             ref={(e) => {
               refs.current[index] = e
             }}
             onMouseUp={handleMouseUp.bind(null, index)}
           >
-            {segment["content"]}
+            {showEdited ? segment["replacement"] : segment["content"]}
           </span>
         )
       )}
