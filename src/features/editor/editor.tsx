@@ -28,6 +28,7 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     { type: "text", content: text, selected: false },
   ])
   const segmentRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [popup, setPopup] = useState<{
     display: boolean
     position: [number, number]
@@ -108,6 +109,22 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     })
   }
 
+  function handlePopupCancel() {
+    // turning off the selected segment
+    setSegments((prev) =>
+      prev.map((item) =>
+        item.type === "text" && item.selected
+          ? { ...item, selected: false }
+          : item
+      )
+    )
+
+		// TODO: merge the segments that are mergeable
+
+    // removing the popup
+    setPopup((prev) => ({ ...prev, display: false }))
+  }
+
   return (
     <div>
       <Popover open={popup.display}>
@@ -124,6 +141,7 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
               <Textarea
                 id="popover-edit-content"
                 placeholder="Corrected Text"
+                ref={textareaRef}
               />
               <FieldDescription>
                 Edits only the content you have selected. If you want to exapnd
@@ -131,7 +149,10 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
               </FieldDescription>
             </Field>
 
-            <div className="float-right">
+            <div className="mt-2 flex justify-end gap-2">
+              <Button variant="outline" onClick={handlePopupCancel}>
+                Cancel
+              </Button>
               <Button>Done</Button>
             </div>
           </div>
