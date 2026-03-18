@@ -44,8 +44,31 @@ export function expandSelectionToWords(
   start: number,
   end: number
 ): [number, number] {
-  text
-  start
-  end
-  return [0, 1]
+  // move from start to left for the start position
+  for (let i = start - 1; i >= 0; i--) {
+    if (text[i] === " ") {
+      start = i + 1
+      break
+    }
+
+		// handle edge case
+		if (i === 0) {
+			start = 0;
+		}
+  }
+
+  // move from end to right for the end position
+  for (let i = end; i <= text.length; i++) {
+    if (text[i] === " ") {
+      end = i
+      break
+    }
+
+    // handle the edge case
+    if (i === text.length) {
+      end = i
+    }
+  }
+
+  return [start, end]
 }
