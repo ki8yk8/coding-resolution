@@ -23,17 +23,18 @@ const HEADER_DESCRIPTION = "You can select the span of text to correct it."
 const INITIAL_TEXT =
   "Hey, I want to developer so, I am learning how to cook, and clean. This is something that you can edit this so feel free to make this thing better. And alternatively you can also screenshot this after editing and share with the team."
 
-function getPopUpPosition(segments: Array<Segment>) {
-  return [0, 0]
-}
-
 export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
   const [segments, setSegments] = useState<Array<Segment>>([
     { type: "text", content: text, selected: false },
   ])
   const segmentRefs = useRef<(HTMLSpanElement | null)[]>([])
-  const [popOpen, setPopOpen] = useState<boolean>(false)
-  const [popPosition, setPopPosition] = useState<[number, number]>([0, 0])
+  const [popup, setPopup] = useState<{
+    display: boolean
+    position: [number, number]
+  }>({
+    display: false,
+    position: [0, 0],
+  })
 
   /* 
 	1. onMouseUp see if there are multiple segment or single segment; if multiple then toast
@@ -44,8 +45,13 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
 	6. create new segment array based on the condition
 	*/
   function handleMouseUp(index: number) {
-    // if the segment ref is not assigned or segment is already edited
-    if (!segmentRefs.current[index] || segments[index].type === "edit") return
+    // if the segment ref is not assigned or segment is already edited or if popup is already open
+    if (
+      !segmentRefs.current[index] ||
+      segments[index].type === "edit" ||
+      popup.display
+    )
+      return
 
     // get the selection info
     const sel = getSelection(segmentRefs.current[index])
@@ -62,19 +68,29 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
     ]
 
     // isolating the selected part only
-    const beforeSelectedSegment:Array<Segment> = newStart === 0? [] : [{
-			type: "text" as const,
-			content: thisSegment.content.slice(0, newStart),
-		}]
-    const selectedSegment:Segment = {
-			type: "text" as const,
-			content: thisSegment.content.slice(newStart, newEnd),
-			selected: true,
-		};
-    const afterSelectedSegment = newEnd === thisSegment.content.length ? [] : [{
-			type: "text" as const,
-			content: thisSegment.content.slice(newEnd,)
-		}]
+    const beforeSelectedSegment: Array<Segment> =
+      newStart === 0
+        ? []
+        : [
+            {
+              type: "text" as const,
+              content: thisSegment.content.slice(0, newStart),
+            },
+          ]
+    const selectedSegment: Segment = {
+      type: "text" as const,
+      content: thisSegment.content.slice(newStart, newEnd),
+      selected: true,
+    }
+    const afterSelectedSegment =
+      newEnd === thisSegment.content.length
+        ? []
+        : [
+            {
+              type: "text" as const,
+              content: thisSegment.content.slice(newEnd),
+            },
+          ]
 
     // joining all the segment
     const updatedSegment = [
@@ -84,21 +100,23 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
       ...afterSelectedSegment,
       ...postSegments,
     ]
-		setSegments(updatedSegment)
+    setSegments(updatedSegment)
 
-    setPopOpen(true)
-    setPopPosition([rect.left, rect.bottom + 2])
+    setPopup({
+      display: true,
+      position: [rect.left, rect.bottom + 2],
+    })
   }
 
   return (
     <div>
-      <Popover open={popOpen}>
+      <Popover open={popup.display}>
         <PopoverTrigger asChild className="hidden">
           <span />
         </PopoverTrigger>
         <PopoverContent
           className="fixed"
-          style={{ left: popPosition[0], top: popPosition[1] }}
+          style={{ left: popup.position[0], top: popup.position[1] }}
         >
           <div>
             <Field>
