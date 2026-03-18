@@ -117,12 +117,42 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
         : item
     )
 
-		// merging the consecutive segments
-		setSegments(cleanSegments(updatedSegments))
+    // merging the consecutive segments
+    setSegments(cleanSegments(updatedSegments))
 
     // removing the popup
     setPopup((prev) => ({ ...prev, display: false }))
   }
+
+  function handlePopupSubmit() {
+    const editedText = textareaRef.current?.value.trim()
+
+    // if submitted empty then it is equivalent to cancel
+    if (!editedText) {
+      handlePopupCancel()
+      return
+    }
+
+    setSegments((prev) => {
+      const oldSegments = [...prev]
+      // find the edited segment and add the replacement
+      const editSegmentIndex = oldSegments.findIndex(
+        (item) => item.type === "text" && item.selected
+      )
+      oldSegments[editSegmentIndex] = {
+        type: "edit",
+        content: segments[editSegmentIndex]["content"],
+        replacement: editedText,
+      }
+
+      return oldSegments
+    })
+
+    // removing the popup
+    setPopup((prev) => ({ ...prev, display: false }))
+  }
+
+	console.log(segments);
 
   return (
     <div>
@@ -152,7 +182,7 @@ export default function Editor({ text = INITIAL_TEXT, onChange }: EditorProps) {
               <Button variant="outline" onClick={handlePopupCancel}>
                 Cancel
               </Button>
-              <Button>Done</Button>
+              <Button onClick={handlePopupSubmit}>Done</Button>
             </div>
           </div>
         </PopoverContent>

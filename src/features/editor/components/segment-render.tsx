@@ -11,7 +11,7 @@ export default function Segments({
   onMouseUp?: (index: number) => void
   showEdited?: boolean
 }) {
-  const editedSpanStyle = showEdited ? "" : ""
+  const editedSpanStyle = showEdited ? "" : "line-through"
 
   const handleMouseUp = (index: number) => onMouseUp?.(index)
 
@@ -32,7 +32,7 @@ export default function Segments({
         ) : (
           <span
             key={index}
-            className={`${editedSpanStyle}`}
+            className={`italic bg-blue-400 ${editedSpanStyle}`}
             ref={(e) => {
               refs.current[index] = e
             }}
