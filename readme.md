@@ -1,0 +1,2 @@
+# About the Project
+The project utilizes ShadCn UI mainly to create a single page portfolio. I was planning to create some form of UI that would allow the users to edit the portfolio dynamically on live. This is a demo and next step might be creating and admin panel to allow edit of each section in such way and helping them publish their own site easily.
