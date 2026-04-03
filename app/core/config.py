@@ -11,7 +11,7 @@ class Settings(BaseSettings):
 	@computed_field
 	@property
 	def MONGO_URI(self) -> str:
-		return f"mongodb://{self.MONGO_USER}:{self.MONGO_PASSWD}@{self.MONGO_HOST}:{self.MONGO_DB_NAME}"
+		return f"mongodb://{self.MONGO_USER}:{self.MONGO_PASSWD}@{self.MONGO_HOST}:{self.MONGO_PORT}"
 
 	class Config:
 		env_file = ".env"
