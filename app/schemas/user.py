@@ -1,10 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from beanie import PydanticObjectId
 from datetime import datetime
+from typing import Annotated
 
 class UserCreate(BaseModel):
-	email: str
-	name: str
+	email: EmailStr
+	name: Annotated[str, Field(None, min_length=3, max_length=100)]
 
 class UserResponse(BaseModel):
 	id: PydanticObjectId
