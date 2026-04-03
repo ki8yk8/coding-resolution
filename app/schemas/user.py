@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from beanie import PydanticObjectId
 from datetime import datetime
 
 class UserCreate(BaseModel):
@@ -6,7 +7,7 @@ class UserCreate(BaseModel):
 	name: str
 
 class UserResponse(BaseModel):
-	id: str
+	id: PydanticObjectId
 	email: str
 	name: str
 	created_at: datetime
