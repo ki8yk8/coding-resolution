@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.core.database import init_db
+from app.routers import user
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,7 +16,9 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(debug=True, lifespan=lifespan)
 
-# first api endpoint
+app.include_router(user.router, prefix="/users", tags=["users"])
+
+# status route that can be used to test the backend
 @app.get("/")
-def get_hello_world():
-	return "Hello World"
+def get_status():
+	return "okay"
