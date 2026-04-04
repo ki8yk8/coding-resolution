@@ -1,4 +1,5 @@
 from fastapi import APIRouter, status, Depends
+from beanie import PydanticObjectId
 from app.models.user import User
 from app.models.project import Project
 from app.schemas.project import ProjectResponse, ProjectCreate, ProjectShareUpdate
@@ -24,7 +25,7 @@ async def get_all_projects(user: User=Depends(get_user_details)):
 	return await Project.find_all().to_list()
 
 @router.get("/{id}", response_model=ProjectResponse, status_code=status.HTTP_200_OK)
-async def get_project_by_id(id: str, user: User=Depends(get_user_details)):
+async def get_project_by_id(id: PydanticObjectId, user: User=Depends(get_user_details)):
 	project = await Project.find_one(Project.id == id)
 	if not project:
 		raise ProjectNotFoundException(id)
@@ -52,17 +53,18 @@ async def update_project_access(data: ProjectShareUpdate, user: User = Depends(g
 
 	# update the access
 	project.user_with_access.append(data.email)
+	project.save()
 
 	return
 
-@router.delete("/{id}", status_code=status.HTTP_200_OK)
-async def delete_project(id: str, user: User = Depends(get_user_details)):
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project(id: PydanticObjectId, user: User = Depends(get_user_details)):
 	project = await Project.find_one(Project.id == id)
 	if not project:
 		raise ProjectNotFoundException(id)
 	
 	# only the author can delete the project
-	if project.author_email == user.email:
+	if not project.author_email == user.email:
 		raise OnlyAuthorCanDeleteException()
 	
 	await project.delete()

@@ -1,11 +1,12 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from datetime import datetime
+from beanie import PydanticObjectId
 
 class ProjectCreate(BaseModel):
 	name: str
 
 class ProjectShareUpdate(BaseModel):
-	id: str
+	id: PydanticObjectId
 	email: EmailStr
 
 class ProjectResponse(BaseModel):
