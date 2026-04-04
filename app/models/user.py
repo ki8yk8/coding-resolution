@@ -1,15 +1,16 @@
 from beanie import Document
-from datetime import datetime, timezone
+from datetime import datetime
 from pydantic import Field, EmailStr
-from typing import Annotated
-
-def utc_now():
-	return datetime.now(timezone.utc)
+from typing import Optional
+from app.services.datetime import utc_now
 
 class User(Document):
 	email: EmailStr
 	name: str
-	created_at: datetime = Field(default_factory=utc_now)
+	invited_at: datetime = Field(default_factory=utc_now)
+	created_at: Optional[datetime] = None
+	totp_secret: Optional[str] = None
+	password: Optional[str] = None
 
 	class Settings:
 		name="users"

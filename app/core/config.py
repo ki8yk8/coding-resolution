@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from pydantic import computed_field
+from datetime import timedelta
 
 class Settings(BaseSettings):
 	MONGO_USER: str
@@ -7,6 +8,10 @@ class Settings(BaseSettings):
 	MONGO_HOST: str = "localhost"
 	MONGO_DB_NAME: str = "mosaic"
 	MONGO_PORT: int = 27017
+	AUTH_SECRET: str
+	AUTH_EXPIRY: int = 86400    # in seconds
+	INVITE_EXPIRY: timedelta = timedelta(weeks=1)
+
 
 	@computed_field
 	@property
