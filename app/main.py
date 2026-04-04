@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.core.database import init_db
-from app.routers import user
+from app.routers import user, auth
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,6 +17,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(debug=True, lifespan=lifespan)
 
 app.include_router(user.router, prefix="/users", tags=["users"])
+app.include_router(auth.router, prefix="/auth", tags=["authentication"])
 
 # status route that can be used to test the backend
 @app.get("/")
