@@ -19,3 +19,13 @@ class InvalidAccessTokenException(HTTPException):
 				"message": "Could not validate the user"
 			}
 		)
+
+class Invalid2FAException(HTTPException):
+	def __init__(self):
+		super().__init__(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail={
+				"error_code": "INVALID_2FA",
+				"message": "OTP doesn't matches. Please try again.",
+			}
+		)

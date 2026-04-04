@@ -25,3 +25,6 @@ class AccessToken(BaseModel):
 	role: UserRole
 	iat: datetime
 	exp: datetime
+
+class TOTP_Setup_Response(BaseModel):
+	uri: str

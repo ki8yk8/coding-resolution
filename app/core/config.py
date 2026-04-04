@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 	MONGO_DB_NAME: str = "mosaic"
 	MONGO_PORT: int = 27017
 	AUTH_SECRET: str
-	AUTH_EXPIRY: timedelta = timedelta(seconds=1)
+	AUTH_EXPIRY: timedelta = timedelta(days=1)
 	INVITE_EXPIRY: timedelta = timedelta(weeks=1)
 
 	@computed_field
