@@ -9,3 +9,13 @@ class CredentialsMismatchException(HTTPException):
 				"message": "The provided credential do not matches with our database",
 			}
 		)
+
+class InvalidAccessTokenException(HTTPException):
+	def __init__(self):
+		super().__init__(
+			status_code=status.HTTP_403_FORBIDDEN,
+			detail={
+				"error_code": "INVALID_ACCESS_TOKEN",
+				"message": "Could not validate the user"
+			}
+		)

@@ -12,7 +12,7 @@ class UserCreate(BaseModel):
 	password: str = Field(..., min_length=8)
 
 class UserResponse(BaseModel):
-	id: PydanticObjectId
+	id: str
 	email: str
 	name: str
 	created_at: datetime | None
