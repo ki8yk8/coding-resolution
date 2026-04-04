@@ -7,7 +7,6 @@ class UserLogin(BaseModel):
 	password: str
 
 class UserVerify(BaseModel):
-	email: str
 	totp: str
 
 class UserRole(str, Enum):

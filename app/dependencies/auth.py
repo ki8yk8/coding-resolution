@@ -15,7 +15,7 @@ async def get_user_details(request: Request)->User:
 	if not payload:
 		raise InvalidAccessTokenException()
 	
-	email = payload.email
+	email = payload["email"]
 	user_with_email = await User.find_one(User.email == email)
 	if not user_with_email:
 		raise UserNotFoundException()
