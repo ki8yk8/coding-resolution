@@ -8,6 +8,7 @@ class User(Document):
 	email: EmailStr
 	name: str
 	invited_at: datetime = Field(default_factory=utc_now)
+	invited_by: EmailStr
 	created_at: Optional[datetime] = None
 	totp_secret: Optional[str] = None
 	password: Optional[str] = None

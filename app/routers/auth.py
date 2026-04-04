@@ -31,6 +31,17 @@ async def login(data: UserLogin, response: Response):
 
 	return
 
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+async def logout(response: Response, payload: AccessToken = Depends(get_access_token_payload)):
+	response.delete_cookie(
+		key="access_token",
+		httponly=True,
+		secure=True,
+		samesite="lax",
+	)
+	
+	return 
+
 @router.get("/", response_model=AccessToken, status_code=status.HTTP_200_OK)
 async def about(payload:AccessToken = Depends(get_access_token_payload)):
 	return payload

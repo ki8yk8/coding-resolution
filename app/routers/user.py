@@ -1,21 +1,24 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse, UserInvite
 from app.exceptions.user import DuplicateEmailException, UserNotFoundException, InvitationExpiredException
 from app.services.datetime import utc_now, ensure_utc
 from app.services.auth import hash_password
 from app.core.config import settings
+from app.dependencies.auth import get_user_details
 
 router = APIRouter()
 
 @router.post("/invite", status_code=status.HTTP_204_NO_CONTENT)
-async def invite_user(data: UserInvite):
+async def invite_user(data: UserInvite, user: User = Depends(get_user_details)):
 	user_with_same_email = await User.find_one(User.email == data.email)
 	if user_with_same_email:
 		raise DuplicateEmailException(data.email)
 	
-	user = User(**data.model_dump())
-	await user.insert()
+	new_user_details = data.model_dump()
+	new_user_details["invited_by"] = user.email
+	new_user = User(**new_user_details)
+	await new_user.insert()
 
 	return
 
@@ -43,11 +46,11 @@ async def create_user(data: UserCreate):
 	return
 
 @router.get("/", response_model=list[UserResponse])
-async def get_users():
+async def get_users(user: User = Depends(get_user_details)):
 	return await User.find_all().to_list()
 
 @router.get("/{email}", response_model=UserResponse)
-async def get_user(email: str):
+async def get_user(email: str, user: User = Depends(get_user_details)):
 	user = await User.find_one(User.email == email)
 
 	if not user:
