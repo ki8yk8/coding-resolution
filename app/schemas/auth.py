@@ -10,9 +10,6 @@ class UserVerify(BaseModel):
 	email: str
 	totp: str
 
-class UserLoginResponse(BaseModel):
-	access_token: str
-
 class UserRole(str, Enum):
 	ADMIN = "admin"
 	USER = "user"
