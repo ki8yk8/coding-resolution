@@ -3,7 +3,7 @@ from app.models.user import User
 from app.schemas.auth import UserLogin, AccessToken, UserVerify, TOTP_Setup_Response 
 from app.services.auth import verify_password, create_access_token, decode_access_token
 from app.exceptions.user import UserNotFoundException
-from app.exceptions.auth import CredentialsMismatchException, InvalidAccessTokenException, Invalid2FAException
+from app.exceptions.auth import CredentialsMismatchException, Invalid2FAException
 from app.services.totp import generate_qr_URI, verify_totp, create_secret
 from app.core.config import settings
 from app.dependencies.auth import get_access_token_payload, get_user_details
@@ -39,7 +39,7 @@ async def logout(response: Response, payload: AccessToken = Depends(get_access_t
 		secure=True,
 		samesite="lax",
 	)
-	
+
 	return 
 
 @router.get("/", response_model=AccessToken, status_code=status.HTTP_200_OK)

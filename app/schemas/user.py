@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr, Field, computed_field
-from beanie import PydanticObjectId
 from datetime import datetime
 from typing import Optional
 

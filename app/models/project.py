@@ -6,7 +6,7 @@ from typing import List
 
 class Project(Document):
 	name: str
-	authorEmail: EmailStr
+	author_email: EmailStr
 	category: str = "Neo-GutHalu"
 	created_at: datetime = Field(default_factory=utc_now)
 	last_updated_on: datetime = Field(default_factory=utc_now)
