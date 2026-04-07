@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field, computed_field
+from pydantic import BaseModel, EmailStr, Field, computed_field, field_validator
 from datetime import datetime
 from typing import Optional
 
@@ -16,6 +16,11 @@ class UserResponse(BaseModel):
 	name: str
 	created_at: datetime | None
 	invited_at: datetime
+	
+	@field_validator("id", mode="before")
+	@classmethod
+	def convert_id(cls, v) -> str:
+		return str(v)
 
 	# internal field that is read from the model but not exposed as response
 	totp_secret: Optional[str] = Field(exclude=True)

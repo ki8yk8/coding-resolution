@@ -18,7 +18,7 @@ async def get_user_details(request: Request)->User:
 	email = payload["email"]
 	user_with_email = await User.find_one(User.email == email)
 	if not user_with_email:
-		raise UserNotFoundException()
+		raise UserNotFoundException(email)
 	
 	return user_with_email
 
